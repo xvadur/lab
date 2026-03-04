@@ -1,29 +1,45 @@
-# Create T3 App
+# OpenClaw AI Showcase
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Multi-panel AI writing console built with Next.js + TypeScript, using a server-side OpenClaw adapter.
 
-## What's next? How do I make an app with this?
+## Quickstart
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+```bash
+npm install
+npm run dev
+```
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## Environment
 
-## Learn More
+Copy `.env.example` to `.env.local` and set:
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- `OPENCLAW_GATEWAY_URL` (default `ws://127.0.0.1:18789`)
+- `OPENCLAW_GATEWAY_TOKEN` (required)
+- `OPENCLAW_AGENT_ID` (default `main`)
+- `OPENCLAW_TIMEOUT_MS` (default `20000`)
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+## Scripts
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+- `npm run dev` - local dev server
+- `npm run lint` - lint check
+- `npm run test` - unit/integration tests
+- `npm run test:e2e` - Playwright smoke tests
+- `npm run verify` - lint + tests + e2e
 
-## How do I deploy this?
+## Safe Fast Git workflow
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+See [WORKFLOW.md](./WORKFLOW.md).
+
+Helper scripts:
+
+```bash
+bash scripts/new-exp.sh "openclaw-showcase"
+bash scripts/sync.sh
+bash scripts/push.sh
+```
+
+## Adapter mode
+
+v1 uses a CLI bridge (`openclaw gateway call`) from server routes. Gateway token never leaves server code.
