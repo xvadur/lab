@@ -1,6 +1,6 @@
 "use client";
 
-import type { WriterTone } from "@/server/openclaw/types";
+import type { WriterTone } from "~/server/openclaw/types";
 
 type PromptPanelProps = {
   prompt: string;

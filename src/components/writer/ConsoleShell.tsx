@@ -1,25 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import type { WriterTone } from "@/server/openclaw/types";
+import { z } from "zod";
+import type { WriterTone } from "~/server/openclaw/types";
 import { OutputPanel } from "./OutputPanel";
 import { PromptPanel } from "./PromptPanel";
 import { RuntimePanel, type RuntimeLog } from "./RuntimePanel";
 
-type GenerateSuccess = {
-  ok: true;
-  text: string;
-  model: string;
-  latencyMs: number;
-  traceId: string;
-};
+const GenerateSuccessSchema = z.object({
+  ok: z.literal(true),
+  text: z.string(),
+  model: z.string(),
+  latencyMs: z.number(),
+  traceId: z.string(),
+});
 
-type GenerateFailure = {
-  ok: false;
-  code: string;
-  message: string;
-  traceId: string;
-};
+const GenerateFailureSchema = z.object({
+  ok: z.literal(false),
+  code: z.string(),
+  message: z.string(),
+  traceId: z.string(),
+});
 
 export function ConsoleShell() {
   const [prompt, setPrompt] = useState("");
@@ -51,10 +52,19 @@ export function ConsoleShell() {
           stream: false,
         }),
       });
-      const json = (await response.json()) as GenerateSuccess | GenerateFailure;
+      const json = (await response.json()) as unknown;
+      const failureParsed = GenerateFailureSchema.safeParse(json);
+      const successParsed = GenerateSuccessSchema.safeParse(json);
 
-      if (!response.ok || !json.ok) {
-        const failure = json as GenerateFailure;
+      if (!response.ok || failureParsed.success) {
+        const failure = failureParsed.success
+          ? failureParsed.data
+          : {
+              code: "INTERNAL",
+              message: "Unexpected server error",
+              traceId: crypto.randomUUID(),
+              ok: false as const,
+            };
         const message =
           failure.code === "GATEWAY_UNREACHABLE"
             ? "OpenClaw gateway is unreachable. Start it and retry."
@@ -71,7 +81,11 @@ export function ConsoleShell() {
         return;
       }
 
-      const success = json as GenerateSuccess;
+      if (!successParsed.success) {
+        throw new Error("Unexpected success payload");
+      }
+
+      const success = successParsed.data;
       setOutput(success.text);
       setModel(success.model);
       setLogs((prev) => [

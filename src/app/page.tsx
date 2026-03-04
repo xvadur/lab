@@ -1,4 +1,4 @@
-import { ConsoleShell } from "@/components/writer/ConsoleShell";
+import { ConsoleShell } from "~/components/writer/ConsoleShell";
 
 export default function HomePage() {
   return (

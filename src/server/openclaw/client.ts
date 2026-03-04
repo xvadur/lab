@@ -91,11 +91,11 @@ export async function defaultCommandRunner(
   let stdout = "";
   let stderr = "";
 
-  child.stdout.on("data", (chunk) => {
-    stdout += chunk.toString();
+  child.stdout.on("data", (chunk: Buffer) => {
+    stdout += chunk.toString("utf8");
   });
-  child.stderr.on("data", (chunk) => {
-    stderr += chunk.toString();
+  child.stderr.on("data", (chunk: Buffer) => {
+    stderr += chunk.toString("utf8");
   });
 
   const timeoutId = setTimeout(() => {

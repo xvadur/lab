@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getOpenClawHealth } from "@/server/openclaw/client";
-import { getOpenClawEnv } from "@/server/openclaw/env";
+import { getOpenClawHealth } from "~/server/openclaw/client";
+import { getOpenClawEnv } from "~/server/openclaw/env";
 
 export async function GET() {
   const env = getOpenClawEnv();

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { OpenClawError } from "@/server/openclaw/errors";
+import { OpenClawError } from "~/server/openclaw/errors";
 
 const generateWithOpenClawMock = vi.fn();
 const getOpenClawHealthMock = vi.fn();
@@ -10,12 +10,12 @@ const getOpenClawEnvMock = vi.fn(() => ({
   OPENCLAW_TIMEOUT_MS: 20000,
 }));
 
-vi.mock("@/server/openclaw/client", () => ({
+vi.mock("~/server/openclaw/client", () => ({
   generateWithOpenClaw: generateWithOpenClawMock,
   getOpenClawHealth: getOpenClawHealthMock,
 }));
 
-vi.mock("@/server/openclaw/env", () => ({
+vi.mock("~/server/openclaw/env", () => ({
   getOpenClawEnv: getOpenClawEnvMock,
 }));
 

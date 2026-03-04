@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { generateWithOpenClaw } from "@/server/openclaw/client";
-import { OpenClawError } from "@/server/openclaw/errors";
-import { getOpenClawEnv } from "@/server/openclaw/env";
-import { GenerateRequestSchema } from "@/server/openclaw/schema";
+import { generateWithOpenClaw } from "~/server/openclaw/client";
+import { OpenClawError } from "~/server/openclaw/errors";
+import { getOpenClawEnv } from "~/server/openclaw/env";
+import { GenerateRequestSchema } from "~/server/openclaw/schema";
 
 type ApiErrorCode = "BAD_REQUEST" | "GATEWAY_UNREACHABLE" | "TIMEOUT" | "AUTH_FAILED" | "INTERNAL";
 
