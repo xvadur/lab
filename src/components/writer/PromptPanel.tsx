@@ -1,5 +1,6 @@
 "use client";
 
+import type { KeyboardEvent } from "react";
 import type { WriterTone } from "~/server/openclaw/types";
 
 type PromptPanelProps = {
@@ -23,17 +24,34 @@ export function PromptPanel({
   onTemperatureChange,
   onSubmit,
 }: PromptPanelProps) {
+  const promptLength = prompt.trim().length;
+  const canSubmit = !isLoading && promptLength > 0;
+
+  function onPromptKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && canSubmit) {
+      event.preventDefault();
+      onSubmit();
+    }
+  }
+
   return (
     <section className="rounded-2xl border border-white/15 bg-black/35 p-5 shadow-xl backdrop-blur">
       <h2 className="text-xl font-semibold text-white">Prompt Console</h2>
       <p className="mt-1 text-sm text-slate-300">Write your request and shape generation behavior.</p>
 
-      <label className="mt-4 block text-xs uppercase tracking-[0.2em] text-slate-300">Prompt</label>
+      <div className="mt-4 flex items-center justify-between">
+        <label htmlFor="prompt-input" className="block text-xs uppercase tracking-[0.2em] text-slate-300">
+          Prompt
+        </label>
+        <span className="text-xs text-slate-400">{promptLength} chars</span>
+      </div>
       <textarea
+        id="prompt-input"
         className="mt-2 h-48 w-full resize-none rounded-xl border border-white/15 bg-slate-900/70 p-3 text-sm text-white outline-none ring-0 focus:border-cyan-400"
         placeholder="Write a launch announcement for our AI showcase..."
         value={prompt}
         onChange={(event) => onPromptChange(event.target.value)}
+        onKeyDown={onPromptKeyDown}
       />
 
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -68,10 +86,11 @@ export function PromptPanel({
       <button
         className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-cyan-400 px-4 py-2 font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-slate-500"
         onClick={onSubmit}
-        disabled={isLoading}
+        disabled={!canSubmit}
       >
         {isLoading ? "Generating..." : "Generate"}
       </button>
+      <p className="mt-2 text-xs text-slate-400">Tip: press Cmd/Ctrl + Enter to run generation.</p>
     </section>
   );
 }

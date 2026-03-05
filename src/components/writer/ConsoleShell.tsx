@@ -30,23 +30,27 @@ export function ConsoleShell() {
   const [output, setOutput] = useState("");
   const [model, setModel] = useState("");
   const [error, setError] = useState("");
+  const [isCopying, setIsCopying] = useState(false);
+  const [copyFeedback, setCopyFeedback] = useState("");
   const [logs, setLogs] = useState<RuntimeLog[]>([]);
 
   async function onSubmit() {
-    if (!prompt.trim()) {
+    const normalizedPrompt = prompt.trim();
+    if (!normalizedPrompt) {
       setError("Prompt is required.");
       return;
     }
 
     setIsLoading(true);
     setError("");
+    setCopyFeedback("");
 
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt,
+          prompt: normalizedPrompt,
           tone,
           temperature,
           stream: false,
@@ -75,6 +79,7 @@ export function ConsoleShell() {
             traceId: failure.traceId ?? crypto.randomUUID(),
             status: "error",
             message,
+            createdAt: new Date().toISOString(),
           },
           ...prev,
         ]);
@@ -94,6 +99,7 @@ export function ConsoleShell() {
           status: "success",
           latencyMs: success.latencyMs,
           message: "Generation completed.",
+          createdAt: new Date().toISOString(),
         },
         ...prev,
       ]);
@@ -105,6 +111,7 @@ export function ConsoleShell() {
           traceId: crypto.randomUUID(),
           status: "error",
           message,
+          createdAt: new Date().toISOString(),
         },
         ...prev,
       ]);
@@ -115,7 +122,18 @@ export function ConsoleShell() {
 
   function onCopy() {
     if (!output) return;
-    void navigator.clipboard?.writeText(output);
+    setIsCopying(true);
+    void navigator.clipboard
+      ?.writeText(output)
+      .then(() => {
+        setCopyFeedback("Copied to clipboard.");
+      })
+      .catch(() => {
+        setCopyFeedback("Clipboard is not available in this browser context.");
+      })
+      .finally(() => {
+        setIsCopying(false);
+      });
   }
 
   return (
@@ -140,7 +158,7 @@ export function ConsoleShell() {
           onTemperatureChange={setTemperature}
           onSubmit={onSubmit}
         />
-        <OutputPanel output={output} model={model} onCopy={onCopy} />
+        <OutputPanel output={output} model={model} isCopying={isCopying} copyFeedback={copyFeedback} onCopy={onCopy} />
         <RuntimePanel logs={logs} />
       </div>
     </div>

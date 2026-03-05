@@ -43,3 +43,21 @@ bash scripts/push.sh
 ## Adapter mode
 
 v1 uses a CLI bridge (`openclaw gateway call`) from server routes. Gateway token never leaves server code.
+
+## ChatGPT App (Advanced Writing Cockpit)
+
+Submission-ready ChatGPT App scaffold lives in:
+
+- `apps/chatgpt-writing-cockpit`
+
+Run locally:
+
+```bash
+cd apps/chatgpt-writing-cockpit
+cp .env.example .env
+npm install
+npm run verify
+OPENCLAW_GATEWAY_TOKEN=your-token npm run dev
+```
+
+MCP endpoint: `http://localhost:9090/mcp`

@@ -5,6 +5,7 @@ export type RuntimeLog = {
   status: "success" | "error";
   latencyMs?: number;
   message: string;
+  createdAt: string;
 };
 
 type RuntimePanelProps = {
@@ -26,9 +27,16 @@ export function RuntimePanel({ logs }: RuntimePanelProps) {
               className="rounded-lg border border-white/10 bg-slate-900/70 p-3 text-xs text-slate-200"
             >
               <div className="flex items-center justify-between gap-3">
-                <span className="font-semibold uppercase tracking-[0.2em]">{log.status}</span>
+                <span
+                  className={`font-semibold uppercase tracking-[0.2em] ${
+                    log.status === "success" ? "text-emerald-300" : "text-rose-300"
+                  }`}
+                >
+                  {log.status}
+                </span>
                 <span>{log.latencyMs ? `${log.latencyMs}ms` : "-"}</span>
               </div>
+              <div className="mt-1 text-[11px] text-slate-500">{new Date(log.createdAt).toLocaleTimeString()}</div>
               <div className="mt-1 break-all text-[11px] text-slate-400">trace: {log.traceId}</div>
               <div className="mt-1 text-sm text-slate-100">{log.message}</div>
             </li>
